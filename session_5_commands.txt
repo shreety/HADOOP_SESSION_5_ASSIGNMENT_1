@@ -1,0 +1,36 @@
+employee_details = load 'employee_details.txt' using PigStorage(',') as (emp_id:int,name:chararray,salary:int,rating:int);
+
+employee_expenses = load 'employee_expenses.txt' using PigStorage('\t') as (emp_id:int,expenses:int);
+
+
+1. employee_name_id = foreach employee_details generate emp_id , name;
+
+
+order_employee = order employee_details by rating;
+
+top_employee = limit order_employee 5;
+
+dump top_employee;
+
+
+2.emp_id_odd = filter employee_details by emp_id%2 != 0;
+
+ order_employee_salary = order emp_id_odd by salary desc;
+
+dump order_employee_salary;
+
+3.join_try = join employee_details by emp_id,employee_expenses by emp_id;
+
+dump join_try;
+
+
+order_join = order join_try by employee_expenses::expenses desc;
+
+highest_expenses = limit order_join 1;
+
+4. join_employee_name = foreach join_try generate employee_details::emp_id employee_details::name;
+
+join_employee_name = foreach join_try generate employee_details::emp_id, employee_details::name;
+
+dump join_employee_name;
+
